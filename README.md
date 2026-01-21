@@ -49,6 +49,7 @@
 | 📱 **Diseño Responsive** | Optimizado para dispositivos móviles y tablets | ✅ Completo |
 | 🍪 **Gestión de Cookies** | Banner y política de cookies conforme a RGPD | ✅ Completo |
 | 🔒 **Páginas Legales** | Privacidad, términos y condiciones | ✅ Completo |
+| 🔌 **Conexión Backend** | Integración con backend Node.js + Express + Cloudflare Workers | ✅ Completo |
 
 ---
 
@@ -100,18 +101,37 @@ Asegúrate de tener instalado:
    yarn install
    ```
 
-3. **Configurar variables de entorno** (opcional)
+3. **Configurar variables de entorno**
    ```bash
-   # Crea un archivo .env si necesitas configuraciones personalizadas
-   cp .env.example .env
+   # Crea un archivo .env en la raíz del proyecto
+   echo "VITE_API_URL=http://localhost:5000" > .env
    ```
 
-4. **Iniciar servidor de desarrollo**
+4. **Configurar y ejecutar el Backend**
+   
+   El frontend se conecta con el backend de KriterIA. Clona y ejecuta el backend:
+   
+   ```bash
+   # En otro directorio
+   git clone https://github.com/jrg0055/backend-kriteria.git
+   cd backend-kriteria
+   npm install
+   npm run dev  # El backend se ejecutará en http://localhost:5000
+   ```
+
+5. **Iniciar servidor de desarrollo**
    ```bash
    npm run dev
    ```
    
    La aplicación estará disponible en: `http://localhost:5173`
+
+### Verificación de Conexión
+
+Al iniciar la aplicación, aparecerá una ventana modal indicando el estado de conexión con el backend:
+- ✅ **Verde**: Conexión exitosa con el backend
+- ❌ **Rojo**: Backend no disponible o error de conexión
+- ⏳ **Amarillo**: Intentando conectar...
 
 ---
 
@@ -160,6 +180,8 @@ KriterIA_FrontEnd/
 │   │   └── 📂 images/         # Imágenes del proyecto
 │   │
 │   ├── 📂 components/         # Componentes React
+│   │   ├── BackendConnector.jsx  # Verificación conexión backend
+│   │   │
 │   │   ├── 📂 common/         # Componentes comunes reutilizables
 │   │   │   ├── Button.jsx     # Botones personalizados
 │   │   │   ├── Input.jsx      # Inputs de formulario
@@ -211,7 +233,7 @@ KriterIA_FrontEnd/
 │   │
 │   ├── 📂 redux/              # Configuración de Redux (si aplica)
 │   ├── 📂 services/           # Servicios y API
-│   │   └── api.js             # Cliente API
+│   │   └── api.js             # Cliente API con endpoints del backend
 │   │
 │   ├── 📂 utils/              # Utilidades y helpers
 │   │
@@ -221,6 +243,7 @@ KriterIA_FrontEnd/
 │   ├── main.jsx               # Punto de entrada
 │   └── index.css              # Estilos globales
 │
+├── .env                       # Variables de entorno (VITE_API_URL)
 ├── .gitignore                 # Archivos ignorados por Git
 ├── eslint.config.js           # Configuración ESLint
 ├── index.html                 # HTML principal
@@ -237,7 +260,9 @@ KriterIA_FrontEnd/
 
 ### Próximas Funcionalidades
 
-- [ ] Integración con backend para búsqueda real
+- [x] Integración con backend (Node.js + Express + Cloudflare Workers)
+- [x] Conexión con API REST
+- [ ] Integración completa con IA para búsqueda real
 - [ ] Sistema de favoritos persistente
 - [ ] Notificaciones push para ofertas
 - [ ] Modo oscuro

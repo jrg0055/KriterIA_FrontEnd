@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ToastProvider } from './context/ToastContext';
 // Common components
 import PublicLayout from './components/common/PublicLayout';
+import BackendConnector from './components/BackendConnector';
 // Pages
 import LandingContent from './pages/LandingContent';
 import HowItWorksPage from './pages/HowItWorksPage';
@@ -162,6 +163,9 @@ const KriterIA_App = () => {
     return (
         <ToastProvider>
             <div className="min-h-screen bg-black text-white font-sans selection:bg-purple-500/30">
+                {/* Componente de verificación de conexión con el backend */}
+                <BackendConnector />
+                
                 {renderContent()}
             </div>
         </ToastProvider>

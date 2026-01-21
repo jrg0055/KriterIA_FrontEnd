@@ -3,7 +3,7 @@
  * Stub para conectar con el backend de los compañeros
  */
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 /**
  * Helper para hacer peticiones HTTP
@@ -118,6 +118,19 @@ export async function checkServerHealth() {
     }
 }
 
+export async function getHello() {
+    try {
+        const response = await fetch(`${API_URL}/api/hello`);
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error al conectar con el backend:', error);
+        throw error;
+    }
+}
+
 export default {
     login,
     register,
@@ -131,4 +144,5 @@ export default {
     addToCart,
     removeFromCart,
     checkServerHealth,
+    getHello,
 };
