@@ -15,7 +15,7 @@ function BackendConnector() {
   useEffect(() => {
     // Intenta conectar con varios endpoints comunes del backend
     const checkBackendConnection = async () => {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       const endpoints = [
         '/api/hello',
         '/api/health', 
