@@ -70,7 +70,7 @@ function BackendConnector() {
     }, 10000); */
 
     //return () => clearInterval(interval);
-  }, [isConnected]);
+  }, []);
 
   // Auto-ocultar después de 5 segundos si la conexión es exitosa
   useEffect(() => {
