@@ -17,9 +17,6 @@ function BackendConnector() {
     const checkBackendConnection = async () => {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       const endpoints = [
-        '/api/hello',
-        '/api/health', 
-        '/health',
         '/'
       ];
 
