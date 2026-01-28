@@ -63,13 +63,13 @@ function BackendConnector() {
     checkBackendConnection();
 
     // Reintenta la conexión cada 10 segundos si hay error
-    const interval = setInterval(() => {
+    /*const interval = setInterval(() => {
       if (!isConnected) {
         checkBackendConnection();
       }
-    }, 10000);
+    }, 10000); */
 
-    return () => clearInterval(interval);
+    //return () => clearInterval(interval);
   }, [isConnected]);
 
   // Auto-ocultar después de 5 segundos si la conexión es exitosa
