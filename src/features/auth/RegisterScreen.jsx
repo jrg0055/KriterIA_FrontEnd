@@ -4,18 +4,46 @@ import { useToast } from '../../context/ToastContext';
 import Logo from '../../components/common/Logo';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
+import { register } from '../../services/api';
 
 const RegisterScreen = ({ onRegisterSuccess, onBack, onLoginClick }) => {
     const [loading, setLoading] = useState(false);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const { addToast } = useToast();
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
+        if (!name.trim() || !email.trim() || !password.trim()) {
+            addToast('Por favor, completa todos los campos', 'error');
+            return;
+        }
+
+        if (password.length < 6) {
+            addToast('La contraseña debe tener al menos 6 caracteres', 'error');
+            return;
+        }
+
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            const response = await register({ name, email, password });
+            
+            // Guardar token si el backend lo devuelve
+            if (response.token) {
+                localStorage.setItem('authToken', response.token);
+            }
+            if (response.user) {
+                localStorage.setItem('user', JSON.stringify(response.user));
+            }
+            
             addToast('Cuenta creada correctamente', 'success');
             onRegisterSuccess();
-        }, 1500);
+        } catch (error) {
+            console.error('Error de registro:', error);
+            addToast(error.message || 'Error al crear la cuenta', 'error');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -36,15 +64,31 @@ const RegisterScreen = ({ onRegisterSuccess, onBack, onLoginClick }) => {
                 <div className="space-y-4">
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Nombre Completo</label>
-                        <Input placeholder="Juan Pérez" icon={User} />
+                        <Input 
+                            placeholder="Juan Pérez" 
+                            icon={User}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
                     </div>
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Email</label>
-                        <Input placeholder="usuario@ejemplo.com" icon={Mail} />
+                        <Input 
+                            placeholder="usuario@ejemplo.com" 
+                            icon={Mail}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
                     </div>
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Contraseña</label>
-                        <Input placeholder="••••••••" type="password" icon={Lock} />
+                        <Input 
+                            placeholder="••••••••" 
+                            type="password" 
+                            icon={Lock}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
                     </div>
 
                     <Button className="w-full mt-6 group" onClick={handleRegister} isLoading={loading}>

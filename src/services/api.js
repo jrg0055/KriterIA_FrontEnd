@@ -1,27 +1,46 @@
 /**
  * API Service - KriterIA Frontend
- * Stub para conectar con el backend de los compañeros
+ * Conexión real con el backend
  */
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 /**
+ * Helper para obtener el token de autenticación
+ */
+function getAuthToken() {
+    return localStorage.getItem('authToken');
+}
+
+/**
  * Helper para hacer peticiones HTTP
  */
 async function fetchAPI(endpoint, options = {}) {
+    const token = getAuthToken();
+    
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers,
+    };
+    
+    // Añadir token si existe
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}${endpoint}`, {
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers,
-        },
+        headers,
         ...options,
     });
 
+    const data = await response.json().catch(() => ({}));
+
     if (!response.ok) {
-        throw new Error(`Error del servidor: ${response.status}`);
+        const errorMessage = data.message || data.error || `Error del servidor: ${response.status}`;
+        throw new Error(errorMessage);
     }
 
-    return response.json();
+    return data;
 }
 
 // ============================================
@@ -29,7 +48,6 @@ async function fetchAPI(endpoint, options = {}) {
 // ============================================
 
 export async function login(email, password) {
-    // TODO: Implementar cuando el backend esté listo
     return fetchAPI('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
@@ -37,7 +55,6 @@ export async function login(email, password) {
 }
 
 export async function register(userData) {
-    // TODO: Implementar cuando el backend esté listo
     return fetchAPI('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify(userData),
@@ -45,8 +62,10 @@ export async function register(userData) {
 }
 
 export async function logout() {
-    // TODO: Implementar cuando el backend esté listo
-    return fetchAPI('/api/auth/logout', { method: 'POST' });
+    const result = await fetchAPI('/api/auth/logout', { method: 'POST' });
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    return result;
 }
 
 // ============================================
@@ -54,7 +73,6 @@ export async function logout() {
 // ============================================
 
 export async function sendMessage(message, history = []) {
-    // TODO: Conectar con el backend de IA de los compañeros
     return fetchAPI('/api/chat', {
         method: 'POST',
         body: JSON.stringify({ message, history }),
@@ -62,7 +80,6 @@ export async function sendMessage(message, history = []) {
 }
 
 export async function sendInteractiveMessage(message, conversationId, products = []) {
-    // TODO: Conectar con el backend de IA de los compañeros
     return fetchAPI('/api/interactive-chat', {
         method: 'POST',
         body: JSON.stringify({ message, conversationId, products }),

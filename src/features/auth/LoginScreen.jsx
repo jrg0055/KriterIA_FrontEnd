@@ -4,18 +4,40 @@ import { useToast } from '../../context/ToastContext';
 import Logo from '../../components/common/Logo';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
+import { login } from '../../services/api';
 
 const LoginScreen = ({ onLoginSuccess, onBack, onRegisterClick, initialQuery }) => {
     const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const { addToast } = useToast();
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
+        if (!email.trim() || !password.trim()) {
+            addToast('Por favor, completa todos los campos', 'error');
+            return;
+        }
+
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            const response = await login(email, password);
+            
+            // Guardar token si el backend lo devuelve
+            if (response.token) {
+                localStorage.setItem('authToken', response.token);
+            }
+            if (response.user) {
+                localStorage.setItem('user', JSON.stringify(response.user));
+            }
+            
             addToast('Sesión iniciada correctamente', 'success');
             onLoginSuccess(initialQuery);
-        }, 1500);
+        } catch (error) {
+            console.error('Error de login:', error);
+            addToast(error.message || 'Error al iniciar sesión', 'error');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -34,11 +56,22 @@ const LoginScreen = ({ onLoginSuccess, onBack, onRegisterClick, initialQuery }) 
                 <div className="space-y-4">
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Email</label>
-                        <Input placeholder="usuario@ejemplo.com" icon={User} />
+                        <Input 
+                            placeholder="usuario@ejemplo.com" 
+                            icon={User} 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
                     </div>
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Contraseña</label>
-                        <Input placeholder="••••••••" type="password" icon={Settings} />
+                        <Input 
+                            placeholder="••••••••" 
+                            type="password" 
+                            icon={Settings}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
                     </div>
                     <div className="flex justify-between items-center text-xs">
                         <label className="flex items-center gap-2 text-gray-400 cursor-pointer hover:text-white transition-colors">

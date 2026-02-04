@@ -5,6 +5,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Loader2, CheckCircle, ChevronRight, Edit3, SkipForward, ShoppingBag, Star, ExternalLink } from 'lucide-react';
 import logoImg from '../assets/logotfg.png';
+import { sendInteractiveMessage } from '../../services/api';
 
 // Categorías predefinidas con preguntas y opciones
 const PRODUCT_CATEGORIES = {
@@ -222,21 +223,7 @@ const InteractiveChat = ({
             : userMessage;
 
         try {
-            const response = await fetch('http://localhost:3001/api/interactive-chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: contextMessage,
-                    conversationId,
-                    products
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Error en el servidor');
-            }
-
-            const data = await response.json();
+            const data = await sendInteractiveMessage(contextMessage, conversationId, products);
 
             // Añadir mensaje de la IA
             setMessages(prev => [...prev, {
