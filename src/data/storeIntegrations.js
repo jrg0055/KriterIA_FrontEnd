@@ -1,14 +1,38 @@
 /**
  * Store Integrations Data
  * Logos, metadata y configuración para todas las tiendas soportadas
+ * Usando logos locales servidos desde /assets/stores/
  */
+
+// Colores de marca para cada tienda (usado como fallback visual)
+export const STORE_COLORS = {
+    amazon: '#FF9900',
+    pccomponentes: '#FF6600',
+    mediamarkt: '#DF0000',
+    fnac: '#F7CB47',
+    worten: '#E91E63',
+    zalando: '#FF6900',
+    zara: '#000000',
+    hm: '#E50010',
+    mango: '#000000',
+    ikea: '#0051BA',
+    leroymerlin: '#78BE20',
+    decathlon: '#0082C3',
+    nike: '#000000',
+    adidas: '#000000',
+    sephora: '#000000',
+    primor: '#E91E63',
+    tiendanimal: '#00B388',
+    kiwoko: '#00A651'
+};
 
 export const STORE_INTEGRATIONS = [
     // Tecnología
     {
         id: 'amazon',
         name: 'Amazon',
-        logo: '/assets/stores/amazon.svg', // TODO: Añadir imágenes reales
+        logo: '/assets/stores/amazon.png',
+        color: '#FF9900',
         category: 'Tecnología',
         description: 'Líder mundial en e-commerce con millones de productos',
         scopes: ['product:read', 'price:check'],
@@ -21,7 +45,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'pccomponentes',
         name: 'PcComponentes',
-        logo: '/assets/stores/pccomponentes.svg',
+        logo: '/assets/stores/pccomponentes.png',
+        color: '#FF6600',
         category: 'Tecnología',
         description: 'Especialistas en informática y tecnología en España',
         scopes: ['product:read'],
@@ -33,7 +58,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'mediamarkt',
         name: 'MediaMarkt',
-        logo: '/assets/stores/mediamarkt.svg',
+        logo: '/assets/stores/mediamarkt.png',
+        color: '#DF0000',
         category: 'Tecnología',
         description: 'Cadena de electrónica y electrodomésticos',
         scopes: ['product:read', 'price:check'],
@@ -44,7 +70,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'fnac',
         name: 'Fnac',
-        logo: '/assets/stores/fnac.svg',
+        logo: '/assets/stores/fnac.png',
+        color: '#F7CB47',
         category: 'Tecnología',
         description: 'Libros, tecnología y entretenimiento',
         scopes: ['product:read'],
@@ -55,7 +82,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'worten',
         name: 'Worten',
-        logo: '/assets/stores/worten.svg',
+        logo: '/assets/stores/worten.png',
+        color: '#E91E63',
         category: 'Tecnología',
         description: 'Electrónica y electrodomésticos',
         scopes: ['product:read'],
@@ -68,7 +96,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'zalando',
         name: 'Zalando',
-        logo: '/assets/stores/zalando.svg',
+        logo: '/assets/stores/zalando.png',
+        color: '#FF6900',
         category: 'Moda',
         description: 'Moda online con miles de marcas',
         scopes: ['product:read', 'price:check'],
@@ -80,7 +109,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'zara',
         name: 'Zara',
-        logo: '/assets/stores/zara.svg',
+        logo: '/assets/stores/zara.png',
+        color: '#000000',
         category: 'Moda',
         description: 'Moda rápida de Inditex',
         scopes: ['product:read'],
@@ -91,7 +121,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'hm',
         name: 'H&M',
-        logo: '/assets/stores/hm.svg',
+        logo: '/assets/stores/hm.png',
+        color: '#E50010',
         category: 'Moda',
         description: 'Moda asequible para toda la familia',
         scopes: ['product:read'],
@@ -102,7 +133,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'mango',
         name: 'Mango',
-        logo: '/assets/stores/mango.svg',
+        logo: '/assets/stores/mango.png',
+        color: '#000000',
         category: 'Moda',
         description: 'Moda contemporánea española',
         scopes: ['product:read'],
@@ -114,7 +146,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'ikea',
         name: 'IKEA',
-        logo: '/assets/stores/ikea.svg',
+        logo: '/assets/stores/ikea.png',
+        color: '#0051BA',
         category: 'Hogar',
         description: 'Muebles y decoración para el hogar',
         scopes: ['product:read', 'stock:check'],
@@ -125,7 +158,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'leroymerlin',
         name: 'Leroy Merlin',
-        logo: '/assets/stores/leroymerlin.svg',
+        logo: '/assets/stores/leroymerlin.png',
+        color: '#78BE20',
         category: 'Hogar',
         description: 'Bricolaje, construcción y jardín',
         scopes: ['product:read'],
@@ -137,7 +171,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'decathlon',
         name: 'Decathlon',
-        logo: '/assets/stores/decathlon.svg',
+        logo: '/assets/stores/decathlon.png',
+        color: '#0082C3',
         category: 'Deportes',
         description: 'Artículos deportivos para todos',
         scopes: ['product:read', 'stock:check'],
@@ -147,7 +182,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'nike',
         name: 'Nike',
-        logo: '/assets/stores/nike.svg',
+        logo: '/assets/stores/nike.png',
+        color: '#000000',
         category: 'Deportes',
         description: 'Ropa y calzado deportivo premium',
         scopes: ['product:read'],
@@ -157,7 +193,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'adidas',
         name: 'Adidas',
-        logo: '/assets/stores/adidas.svg',
+        logo: '/assets/stores/adidas.png',
+        color: '#000000',
         category: 'Deportes',
         description: 'Marca deportiva líder mundial',
         scopes: ['product:read'],
@@ -169,7 +206,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'sephora',
         name: 'Sephora',
-        logo: '/assets/stores/sephora.svg',
+        logo: '/assets/stores/sephora.png',
+        color: '#000000',
         category: 'Belleza',
         description: 'Cosméticos y productos de belleza',
         scopes: ['product:read'],
@@ -179,7 +217,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'primor',
         name: 'Primor',
-        logo: '/assets/stores/primor.svg',
+        logo: '/assets/stores/primor.png',
+        color: '#E91E63',
         category: 'Belleza',
         description: 'Perfumería y cosmética española',
         scopes: ['product:read'],
@@ -191,7 +230,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'tiendanimal',
         name: 'Tiendanimal',
-        logo: '/assets/stores/tiendanimal.svg',
+        logo: '/assets/stores/tiendanimal.png',
+        color: '#00B388',
         category: 'Mascotas',
         description: 'Todo para tu mascota',
         scopes: ['product:read'],
@@ -201,7 +241,8 @@ export const STORE_INTEGRATIONS = [
     {
         id: 'kiwoko',
         name: 'Kiwoko',
-        logo: '/assets/stores/kiwoko.svg',
+        logo: '/assets/stores/kiwoko.png',
+        color: '#00A651',
         category: 'Mascotas',
         description: 'Tienda especializada en mascotas',
         scopes: ['product:read'],

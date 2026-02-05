@@ -1,8 +1,9 @@
 import React from 'react';
 import { Sparkles, User } from 'lucide-react';
 import { motion } from 'framer-motion';
+import BackendProductCard, { BackendProductList } from './BackendProductCard';
 
-const ChatMessage = ({ role, content, attachments, timestamp, isInteractive }) => {
+const ChatMessage = ({ role, content, attachments, backendProducts, timestamp, isInteractive, onProductSelect }) => {
     const isAi = role === 'ai';
 
     // Renderizar markdown básico (negrita, cursiva, listas)
@@ -17,6 +18,10 @@ const ChatMessage = ({ role, content, attachments, timestamp, isInteractive }) =
             const rendered = parts.map((part, idx) => {
                 if (part.startsWith('**') && part.endsWith('**')) {
                     return <strong key={idx} className="text-[#8c52ff] font-semibold">{part.slice(2, -2)}</strong>;
+                }
+                // Cursiva
+                if (part.startsWith('*') && part.endsWith('*') && !part.startsWith('**')) {
+                    return <em key={idx} className="text-gray-400">{part.slice(1, -1)}</em>;
                 }
                 return part;
             });
@@ -64,8 +69,8 @@ const ChatMessage = ({ role, content, attachments, timestamp, isInteractive }) =
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.2 }}
                     className={`rounded-2xl px-5 py-3 ${isAi
-                            ? 'bg-[#252525] border border-white/5 rounded-tl-none shadow-xl'
-                            : 'bg-gradient-to-br from-[#8c52ff] to-[#7a45e6] rounded-tr-none shadow-lg shadow-[#8c52ff]/30'
+                        ? 'bg-[#252525] border border-white/5 rounded-tl-none shadow-xl'
+                        : 'bg-gradient-to-br from-[#8c52ff] to-[#7a45e6] rounded-tr-none shadow-lg shadow-[#8c52ff]/30'
                         }`}
                 >
                     <div className={`text-sm md:text-base leading-relaxed ${isAi ? 'text-gray-200' : 'text-white'} whitespace-pre-wrap`}>
@@ -73,7 +78,22 @@ const ChatMessage = ({ role, content, attachments, timestamp, isInteractive }) =
                     </div>
                 </motion.div>
 
-                {/* Attachments (Product Cards) */}
+                {/* Backend Products (from AI model response) */}
+                {backendProducts && backendProducts.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="mt-4 w-full"
+                    >
+                        <BackendProductList
+                            products={backendProducts}
+                            onProductSelect={onProductSelect}
+                        />
+                    </motion.div>
+                )}
+
+                {/* Attachments (Legacy Product Cards) */}
                 {attachments && (
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
@@ -102,3 +122,4 @@ const ChatMessage = ({ role, content, attachments, timestamp, isInteractive }) =
 };
 
 export default ChatMessage;
+

@@ -192,32 +192,29 @@ const LandingContent = ({ onStart, onNavigate }) => {
 
     return (
         <div className="stacking-container">
-            {/* ===== HERO SECTION CON DEGRADADO ===== */}
+            {/* DEGRADADO DE FONDO HERO - FULLSCREEN (fuera del StackingSection para cubrir toda la pantalla) */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                {/* Degradado principal púrpura */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[700px] bg-gradient-to-b from-[#8c52ff]/40 via-[#8c52ff]/20 to-transparent rounded-full blur-[120px]" />
+                {/* Degradado secundario derecho */}
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-purple-600/30 via-violet-500/20 to-transparent rounded-full blur-[100px]" />
+                {/* Degradado izquierdo */}
+                <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-indigo-600/25 via-purple-500/15 to-transparent rounded-full blur-[80px]" />
+            </div>
+
+            {/* ===== HERO SECTION ===== */}
             <StackingSection
                 order={1}
                 bgColor="bg-transparent"
                 className="relative"
                 id="hero"
             >
-                {/* DEGRADADO DE FONDO - RESTAURADO */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Degradado principal púrpura */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-[#8c52ff]/40 via-[#8c52ff]/20 to-transparent rounded-full blur-[120px]" />
-                    {/* Degradado secundario */}
-                    <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-purple-600/30 via-violet-500/20 to-transparent rounded-full blur-[100px]" />
-                    {/* Degradado izquierdo */}
-                    <div className="absolute top-40 left-0 w-[400px] h-[400px] bg-gradient-to-br from-indigo-600/25 via-purple-500/15 to-transparent rounded-full blur-[80px]" />
-                    {/* Líneas de luz */}
-                    <div className="absolute top-0 left-1/4 w-px h-[400px] bg-gradient-to-b from-[#8c52ff]/50 to-transparent" />
-                    <div className="absolute top-0 right-1/4 w-px h-[300px] bg-gradient-to-b from-purple-400/30 to-transparent" />
-                </div>
 
                 <div className="flex flex-col items-center justify-center text-center relative z-10">
                     <AnimatedOnScroll animation="fadeInUp" delay={0}>
-                        <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8 hover:bg-white/10 transition-colors cursor-default group backdrop-blur-sm">
-                            <span className="flex h-2 w-2 rounded-full bg-[#8c52ff] animate-pulse"></span>
-                            <span className="text-xs font-medium text-gray-300 uppercase tracking-wider">Potenciado por IA</span>
-                            <ArrowRight size={12} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
+                        <div className="inline-flex items-center gap-2 bg-[#8c52ff]/10 border border-[#8c52ff]/20 rounded-full px-4 py-1.5 mb-8">
+                            <Sparkles size={16} className="text-[#8c52ff]" />
+                            <span className="text-xs font-medium text-[#8c52ff] uppercase tracking-wider">Potenciado por IA</span>
                         </div>
                     </AnimatedOnScroll>
 

@@ -39,7 +39,7 @@ const PublicLayout = ({ children, onNavigate, onLogin, onRegister }) => {
             <div className="fixed bottom-0 right-0 w-[400px] h-[400px] bg-purple-600 rounded-full blur-[100px] opacity-10 pointer-events-none" />
 
             {/* Navbar */}
-            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-[#1b1b1b]/95 backdrop-blur-xl border-b border-white/5 py-4' : 'py-6'}`}>
+            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-[#1b1b1b]/95 backdrop-blur-xl border-b border-white/5 py-4' : 'bg-transparent py-6'}`}>
                 <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
                     <Logo onClick={() => {
                         window.scrollTo({ top: 0, behavior: 'smooth' });
