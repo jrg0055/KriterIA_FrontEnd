@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Sparkles, ShoppingBag, LogOut, TrendingUp, Search, ChevronRight, Edit3, SkipForward } from 'lucide-react';
+import { MessageSquare, Sparkles, ShoppingBag, LogOut, TrendingUp, Search, ChevronRight, Edit3, SkipForward, ChevronDown, Zap, Cpu, Send, Mic } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../../context/ToastContext';
 import { THEME } from '../../constants/theme';
 import { INITIAL_PRODUCTS } from '../../data/products';
@@ -8,6 +9,12 @@ import Logo from '../../components/common/Logo';
 import ChatMessage from '../../components/ui/ChatMessage';
 import ProductCard from '../../components/ui/ProductCard';
 import ProductSlideOver from '../../components/ui/ProductSlideOver';
+
+// Modelos de IA disponibles
+const AI_MODELS = [
+    { id: 'openai/gpt-oss-120b', name: 'High', icon: Cpu, description: 'Más preciso y detallado' },
+    { id: 'openai/gpt-oss-20b', name: 'Flash', icon: Zap, description: 'Rápido y eficiente' },
+];
 
 // Categorías predefinidas con preguntas y opciones
 const PRODUCT_CATEGORIES = {
@@ -156,6 +163,11 @@ const Dashboard = ({ onLogout, initialQuery }) => {
     const [userContext, setUserContext] = useState({});
     const [showCustomInput, setShowCustomInput] = useState(false);
 
+    // Estado para selector de modelo
+    const [selectedModel, setSelectedModel] = useState('openai/gpt-oss-120b');
+    const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
+    const modelDropdownRef = useRef(null);
+
     const [profileSettings, setProfileSettings] = useState({
         amazon: true,
         ebay: false,
@@ -177,6 +189,17 @@ const Dashboard = ({ onLogout, initialQuery }) => {
                 addToast('IA conectada', 'success');
             }
         });
+    }, []);
+
+    // Cerrar dropdown del modelo al hacer click fuera
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modelDropdownRef.current && !modelDropdownRef.current.contains(event.target)) {
+                setIsModelDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     useEffect(() => {
@@ -449,32 +472,126 @@ const Dashboard = ({ onLogout, initialQuery }) => {
                                     </div>
                                 )}
 
-                                {/* Input de texto */}
+                                {/* Input de texto con selector de modelo - Estilo Gemini */}
                                 {(!currentOptions || showCustomInput) && (
-                                    <div className="relative bg-[#252525] border border-white/10 rounded-2xl shadow-2xl p-2 flex items-end gap-2 ring-1 ring-white/5 focus-within:ring-[#8c52ff] transition-all">
-                                        <button className="p-3 text-gray-400 hover:text-[#8c52ff] transition-colors rounded-xl hover:bg-[#8c52ff]/10">
-                                            <Sparkles size={20} />
-                                        </button>
-                                        <textarea
-                                            value={inputVal}
-                                            onChange={(e) => setInputVal(e.target.value)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' && !e.shiftKey) {
-                                                    e.preventDefault();
-                                                    handleSendMessage();
-                                                }
-                                            }}
-                                            placeholder={showCustomInput ? "Escribe tu respuesta..." : "¿Qué producto buscas hoy?"}
-                                            className="w-full bg-transparent text-white placeholder-gray-500 text-sm md:text-base focus:outline-none py-3 resize-none max-h-32"
-                                            rows={1}
-                                        />
-                                        <button
-                                            onClick={() => handleSendMessage()}
-                                            disabled={!inputVal.trim()}
-                                            className="p-3 bg-[#8c52ff] hover:bg-[#7a45e6] text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
-                                        >
-                                            <Sparkles size={20} />
-                                        </button>
+                                    <div className="relative bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-xl transition-all focus-within:border-[#8c52ff]/40 focus-within:shadow-[0_0_20px_rgba(140,82,255,0.15)]">
+                                        {/* Área del textarea */}
+                                        <div className="px-4 pt-4 pb-2">
+                                            <textarea
+                                                value={inputVal}
+                                                onChange={(e) => setInputVal(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                                        e.preventDefault();
+                                                        handleSendMessage();
+                                                    }
+                                                }}
+                                                placeholder={showCustomInput ? "Escribe tu respuesta..." : "¿Qué producto buscas hoy?"}
+                                                className="w-full bg-transparent text-white placeholder-gray-500 text-base focus:outline-none resize-none min-h-[28px] max-h-32 leading-relaxed"
+                                                rows={1}
+                                            />
+                                        </div>
+                                        
+                                        {/* Barra inferior con controles */}
+                                        <div className="flex items-center justify-between px-2 py-2">
+                                            {/* Lado izquierdo - Icono de KriterIA */}
+                                            <div className="flex items-center">
+                                                <button className="p-2 text-[#8c52ff] hover:bg-[#8c52ff]/10 transition-colors rounded-full">
+                                                    <Sparkles size={20} />
+                                                </button>
+                                            </div>
+
+                                            {/* Lado derecho - Selector de modelo y enviar */}
+                                            <div className="flex items-center gap-1">
+                                                {/* Selector de modelo compacto */}
+                                                <div className="relative" ref={modelDropdownRef}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
+                                                        className="flex items-center gap-1 px-3 py-1.5 text-gray-400 hover:text-white hover:bg-white/5 rounded-full transition-all text-sm font-medium"
+                                                    >
+                                                        {(() => {
+                                                            const currentModel = AI_MODELS.find(m => m.id === selectedModel) || AI_MODELS[0];
+                                                            return currentModel.name;
+                                                        })()}
+                                                        <ChevronDown 
+                                                            size={14} 
+                                                            className={`transition-transform duration-200 ${isModelDropdownOpen ? 'rotate-180' : ''}`} 
+                                                        />
+                                                    </button>
+
+                                                    {/* Dropdown de modelos */}
+                                                    <AnimatePresence>
+                                                        {isModelDropdownOpen && (
+                                                            <motion.div
+                                                                initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                                exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                                                                transition={{ duration: 0.15, ease: 'easeOut' }}
+                                                                className="absolute bottom-full right-0 mb-2 w-52 bg-[#2a2a2a] border border-white/10 rounded-2xl shadow-2xl z-[100] overflow-hidden"
+                                                            >
+                                                                <div className="p-1">
+                                                                    {AI_MODELS.map((model) => {
+                                                                        const Icon = model.icon;
+                                                                        const isSelected = selectedModel === model.id;
+                                                                        return (
+                                                                            <button
+                                                                                key={model.id}
+                                                                                type="button"
+                                                                                onClick={() => {
+                                                                                    setSelectedModel(model.id);
+                                                                                    setIsModelDropdownOpen(false);
+                                                                                }}
+                                                                                className={`w-full text-left px-3 py-2.5 rounded-xl transition-all flex items-center gap-3 ${
+                                                                                    isSelected 
+                                                                                        ? 'bg-[#8c52ff]/20 text-white' 
+                                                                                        : 'hover:bg-white/5 text-gray-300'
+                                                                                }`}
+                                                                            >
+                                                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                                                                                    isSelected ? 'bg-[#8c52ff]' : 'bg-white/5'
+                                                                                }`}>
+                                                                                    <Icon size={16} className={isSelected ? 'text-white' : 'text-gray-400'} />
+                                                                                </div>
+                                                                                <div className="flex-1">
+                                                                                    <div className="font-medium text-sm">{model.name}</div>
+                                                                                    <div className="text-xs text-gray-500">{model.description}</div>
+                                                                                </div>
+                                                                                {isSelected && (
+                                                                                    <div className="w-5 h-5 rounded-full bg-[#8c52ff] flex items-center justify-center">
+                                                                                        <span className="text-white text-xs">✓</span>
+                                                                                    </div>
+                                                                                )}
+                                                                            </button>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
+                                                </div>
+
+                                                {/* Separador */}
+                                                <div className="w-px h-6 bg-white/10 mx-1" />
+
+                                                {/* Botón de micrófono */}
+                                                <button
+                                                    type="button"
+                                                    className="p-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-full transition-all"
+                                                >
+                                                    <Mic size={20} />
+                                                </button>
+
+                                                {/* Botón de enviar */}
+                                                <button
+                                                    onClick={() => handleSendMessage()}
+                                                    disabled={!inputVal.trim()}
+                                                    className="p-2.5 bg-[#8c52ff] hover:bg-[#7a45e6] text-white rounded-full transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 disabled:hover:scale-100 shadow-lg shadow-[#8c52ff]/20"
+                                                >
+                                                    <Send size={18} />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                                 <div className="text-center mt-2 text-xs text-gray-600">

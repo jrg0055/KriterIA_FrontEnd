@@ -22,6 +22,11 @@ const KriterIA_App = () => {
     const [currentView, setCurrentView] = useState('landing');
     const [initialQuery, setInitialQuery] = useState(null);
 
+    // Scroll al principio cuando cambia la vista
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }, [currentView]);
+
     useEffect(() => {
         const style = document.createElement('style');
         style.textContent = `

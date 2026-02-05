@@ -48,21 +48,21 @@ async function fetchAPI(endpoint, options = {}) {
 // ============================================
 
 export async function login(email, password) {
-    return fetchAPI('/api/auth/login', {
+    return fetchAPI('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
     });
 }
 
 export async function register(userData) {
-    return fetchAPI('/api/auth/register', {
+    return fetchAPI('/auth/register', {
         method: 'POST',
         body: JSON.stringify(userData),
     });
 }
 
 export async function logout() {
-    const result = await fetchAPI('/api/auth/logout', { method: 'POST' });
+    const result = await fetchAPI('/auth/logout', { method: 'POST' });
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     return result;
@@ -73,16 +73,29 @@ export async function logout() {
 // ============================================
 
 export async function sendMessage(message, history = []) {
-    return fetchAPI('/api/chat', {
+    return fetchAPI('/chat', {
         method: 'POST',
         body: JSON.stringify({ message, history }),
     });
 }
 
 export async function sendInteractiveMessage(message, conversationId, products = []) {
-    return fetchAPI('/api/interactive-chat', {
+    return fetchAPI('/interactive-chat', {
         method: 'POST',
         body: JSON.stringify({ message, conversationId, products }),
+    });
+}
+
+/**
+ * Envía un prompt al modelo de IA seleccionado y recibe recomendaciones de productos
+ * @param {string} prompt - El mensaje/consulta del usuario
+ * @param {string} model - El modelo de IA a utilizar (ej: 'gpt-4', 'gpt-3.5-turbo', 'claude')
+ * @returns {Promise<Array>} - Array de productos recomendados
+ */
+export async function sendPromptToModel(prompt, model = 'openai/gpt-oss-120b') {
+    return fetchAPI('/search', {
+        method: 'POST',
+        body: JSON.stringify({ prompt, model }),
     });
 }
 
@@ -92,15 +105,15 @@ export async function sendInteractiveMessage(message, conversationId, products =
 
 export async function getProducts(filters = {}) {
     const params = new URLSearchParams(filters);
-    return fetchAPI(`/api/products?${params}`);
+    return fetchAPI(`/products?${params}`);
 }
 
 export async function getProductById(id) {
-    return fetchAPI(`/api/products/${id}`);
+    return fetchAPI(`/products/${id}`);
 }
 
 export async function searchProducts(query) {
-    return fetchAPI(`/api/products/search?q=${encodeURIComponent(query)}`);
+    return fetchAPI(`/products/search?q=${encodeURIComponent(query)}`);
 }
 
 // ============================================
@@ -108,18 +121,18 @@ export async function searchProducts(query) {
 // ============================================
 
 export async function getCart() {
-    return fetchAPI('/api/cart');
+    return fetchAPI('/cart');
 }
 
 export async function addToCart(productId, quantity = 1) {
-    return fetchAPI('/api/cart/add', {
+    return fetchAPI('/cart/add', {
         method: 'POST',
         body: JSON.stringify({ productId, quantity }),
     });
 }
 
 export async function removeFromCart(productId) {
-    return fetchAPI(`/api/cart/remove/${productId}`, { method: 'DELETE' });
+    return fetchAPI(`/cart/remove/${productId}`, { method: 'DELETE' });
 }
 
 // ============================================
@@ -128,7 +141,7 @@ export async function removeFromCart(productId) {
 
 export async function checkServerHealth() {
     try {
-        const response = await fetch(`${API_URL}/api/health`);
+        const response = await fetch(`${API_URL}/health`);
         return response.ok;
     } catch {
         return false;
@@ -137,7 +150,7 @@ export async function checkServerHealth() {
 
 export async function getHello() {
     try {
-        const response = await fetch(`${API_URL}/api/hello`);
+        const response = await fetch(`${API_URL}/hello`);
         if (!response.ok) {
             throw new Error(`Error ${response.status}`);
         }
