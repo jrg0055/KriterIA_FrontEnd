@@ -74,17 +74,23 @@ export async function logout() {
 // CHAT - Endpoints del asistente IA
 // ============================================
 
+/**
+ * Envía un mensaje al asistente IA (usa /search internamente)
+ */
 export async function sendMessage(message, history = []) {
-    return fetchAPI('/chat', {
+    return fetchAPI('/search', {
         method: 'POST',
-        body: JSON.stringify({ message, history }),
+        body: JSON.stringify({ prompt: message, model: 'openai/gpt-oss-120b' }),
     });
 }
 
+/**
+ * Envía un mensaje interactivo al asistente IA (usa /search internamente)
+ */
 export async function sendInteractiveMessage(message, conversationId, products = []) {
-    return fetchAPI('/interactive-chat', {
+    return fetchAPI('/search', {
         method: 'POST',
-        body: JSON.stringify({ message, conversationId, products }),
+        body: JSON.stringify({ prompt: message, model: 'openai/gpt-oss-120b' }),
     });
 }
 

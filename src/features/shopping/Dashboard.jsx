@@ -5,7 +5,7 @@ import { useToast } from '../../context/ToastContext';
 import { THEME } from '../../constants/theme';
 import { INITIAL_PRODUCTS } from '../../data/products';
 import { STORE_INTEGRATIONS, STORE_CATEGORIES } from '../../data/storeIntegrations';
-import { sendMessage, sendPromptToModel, checkServerHealth } from '../../services/api';
+import { sendPromptToModel, checkServerHealth } from '../../services/api';
 import Logo from '../../components/common/Logo';
 import ChatMessage from '../../components/ui/ChatMessage';
 import ProductCard from '../../components/ui/ProductCard';
