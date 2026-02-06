@@ -71,37 +71,16 @@ export async function logout() {
 }
 
 // ============================================
-// CHAT - Endpoints del asistente IA
+// CHAT - Endpoint único del asistente IA
 // ============================================
-
-/**
- * Envía un mensaje al asistente IA (usa /search internamente)
- */
-export async function sendMessage(message, history = []) {
-    return fetchAPI('/search', {
-        method: 'POST',
-        body: JSON.stringify({ prompt: message, model: 'openai/gpt-oss-120b' }),
-    });
-}
-
-/**
- * Envía un mensaje interactivo al asistente IA (usa /search internamente)
- */
-export async function sendInteractiveMessage(message, conversationId, products = []) {
-    return fetchAPI('/search', {
-        method: 'POST',
-        body: JSON.stringify({ prompt: message, model: 'openai/gpt-oss-120b' }),
-    });
-}
 
 /**
  * Envía un prompt al modelo de IA seleccionado y recibe recomendaciones de productos
  * @param {string} prompt - El mensaje/consulta del usuario
- * @param {string} model - El modelo de IA a utilizar (ej: 'gpt-4', 'gpt-3.5-turbo', 'claude')
- * @returns {Promise<Array>} - Array de productos recomendados
+ * @param {string} model - El modelo de IA a utilizar (por defecto 'openai/gpt-oss-120b')
+ * @returns {Promise<Object>} - Respuesta del backend con productos recomendados
  */
 export async function sendPromptToModel(prompt, model = 'openai/gpt-oss-120b') {
-    console.log(`🤖 sendPromptToModel → modelo: ${model}`);
     return fetchAPI('/search', {
         method: 'POST',
         body: JSON.stringify({ prompt, model }),
@@ -176,8 +155,6 @@ export default {
     login,
     register,
     logout,
-    sendMessage,
-    sendInteractiveMessage,
     sendPromptToModel,
     getProducts,
     getProductById,
