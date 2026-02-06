@@ -150,7 +150,7 @@ export async function removeFromCart(productId) {
 
 export async function checkServerHealth() {
     try {
-        const response = await fetch(`${API_URL}/`, { signal: AbortSignal.timeout(5000) });
+        const response = await fetch(`${API_URL}`, { signal: AbortSignal.timeout(5000) });
         if (!response.ok) return false;
         const data = await response.json().catch(() => null);
         return data?.success === true;
