@@ -305,7 +305,7 @@ const Dashboard = ({ onLogout, initialQuery }) => {
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
 
-        // Verificar conexión cada 30 segundos
+        // Verificar conexión cada 60 segundos
         const connectionInterval = setInterval(() => {
             if (navigator.onLine) {
                 checkServerHealth().then(connected => {
@@ -316,7 +316,7 @@ const Dashboard = ({ onLogout, initialQuery }) => {
             } else {
                 setAiConnected(false);
             }
-        }, 30000);
+        }, 60000);
 
         // Cleanup
         return () => {
@@ -416,30 +416,17 @@ const Dashboard = ({ onLogout, initialQuery }) => {
                     role: 'ai',
                     content: `He encontrado **${backendProducts.length} productos** que coinciden con tu búsqueda "${text}":\n\n*Modelo utilizado: ${currentModel.name}*`,
                     timestamp: new Date(),
-                    backendProducts: backendProducts // Guardamos los productos para renderizar
+                    backendProducts: backendProducts
                 };
 
                 setMessages(prev => [...prev, aiMsg]);
             } else {
-                // Fallback: Si no hay productos, intentar con sendMessage tradicional
-                console.log('⚠️ No se recibieron productos, usando fallback');
-                const { response, products } = await sendMessage(contextMessage, messages);
-
+                // No se encontraron productos
+                console.log('⚠️ No se recibieron productos');
                 const aiMsg = {
                     role: 'ai',
-                    content: response,
-                    timestamp: new Date(),
-                    attachments: products?.slice(0, 3).map((product, idx) => (
-                        <ProductCard
-                            key={idx}
-                            product={{
-                                ...product,
-                                id: idx,
-                                image: product.image || INITIAL_PRODUCTS[0].image
-                            }}
-                            onClick={handleProductClick}
-                        />
-                    ))
+                    content: `No encontré productos para "${text}". Intenta con otra búsqueda más específica.`,
+                    timestamp: new Date()
                 };
 
                 setMessages(prev => [...prev, aiMsg]);
