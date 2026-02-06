@@ -18,9 +18,11 @@ function getAuthToken() {
 async function fetchAPI(endpoint, options = {}) {
     const token = getAuthToken();
     
+    const { headers: optHeaders, ...restOptions } = options;
+    
     const headers = {
         'Content-Type': 'application/json',
-        ...options.headers,
+        ...optHeaders,
     };
     
     // Añadir token si existe
@@ -29,8 +31,8 @@ async function fetchAPI(endpoint, options = {}) {
     }
 
     const response = await fetch(`${API_URL}${endpoint}`, {
+        ...restOptions,
         headers,
-        ...options,
     });
 
     const data = await response.json().catch(() => ({}));
@@ -93,6 +95,7 @@ export async function sendInteractiveMessage(message, conversationId, products =
  * @returns {Promise<Array>} - Array de productos recomendados
  */
 export async function sendPromptToModel(prompt, model = 'openai/gpt-oss-120b') {
+    console.log(`🤖 sendPromptToModel → modelo: ${model}`);
     return fetchAPI('/search', {
         method: 'POST',
         body: JSON.stringify({ prompt, model }),
@@ -141,8 +144,10 @@ export async function removeFromCart(productId) {
 
 export async function checkServerHealth() {
     try {
-        const response = await fetch(`${API_URL}/health`);
-        return response.ok;
+        const response = await fetch(`${API_URL}/`, { signal: AbortSignal.timeout(5000) });
+        if (!response.ok) return false;
+        const data = await response.json().catch(() => null);
+        return data?.success === true;
     } catch {
         return false;
     }
@@ -150,7 +155,7 @@ export async function checkServerHealth() {
 
 export async function getHello() {
     try {
-        const response = await fetch(`${API_URL}/hello`);
+        const response = await fetch(`${API_URL}/`);
         if (!response.ok) {
             throw new Error(`Error ${response.status}`);
         }
@@ -167,6 +172,7 @@ export default {
     logout,
     sendMessage,
     sendInteractiveMessage,
+    sendPromptToModel,
     getProducts,
     getProductById,
     searchProducts,

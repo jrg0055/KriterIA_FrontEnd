@@ -455,7 +455,7 @@ const Dashboard = ({ onLogout, initialQuery }) => {
             // Mostrar mensaje de error real - sin datos de demostración
             const aiMsg = {
                 role: 'ai',
-                content: `⚠️ **Error de conexión** - No se pudo conectar con el servidor.\n\nPor favor, verifica que el backend esté corriendo en el puerto 5000.`,
+                content: `⚠️ **Error de conexión** - No se pudo conectar con el servidor.\n\nPor favor, verifica que el backend esté disponible.`,
                 timestamp: new Date()
             };
 

@@ -15,7 +15,7 @@ function BackendConnector() {
   useEffect(() => {
     // Intenta conectar con varios endpoints comunes del backend
     const checkBackendConnection = async () => {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       const endpoints = [
         '/'
       ];
@@ -52,7 +52,7 @@ function BackendConnector() {
       }
 
       // Si llegamos aquí, ningún endpoint funcionó
-      setError('No se pudo conectar con el backend. Asegúrate de que esté ejecutándose en http://localhost:5000');
+      setError(`No se pudo conectar con el backend (${API_URL}). Verifica que esté disponible.`);
       setIsConnected(false);
       setIsLoading(false);
     };
