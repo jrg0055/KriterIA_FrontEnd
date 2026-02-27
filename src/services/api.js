@@ -17,14 +17,14 @@ function getAuthToken() {
  */
 async function fetchAPI(endpoint, options = {}) {
     const token = getAuthToken();
-    
+
     const { headers: optHeaders, ...restOptions } = options;
-    
+
     const headers = {
         'Content-Type': 'application/json',
         ...optHeaders,
     };
-    
+
     // Añadir token si existe
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -39,7 +39,9 @@ async function fetchAPI(endpoint, options = {}) {
 
     if (!response.ok) {
         const errorMessage = data.message || data.error || `Error del servidor: ${response.status}`;
-        throw new Error(errorMessage);
+        const error = new Error(errorMessage);
+        error.status = response.status;
+        throw error;
     }
 
     return data;

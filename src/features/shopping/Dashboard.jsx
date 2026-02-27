@@ -305,24 +305,10 @@ const Dashboard = ({ onLogout, initialQuery }) => {
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
 
-        // Verificar conexión cada 60 segundos
-        const connectionInterval = setInterval(() => {
-            if (navigator.onLine) {
-                checkServerHealth().then(connected => {
-                    setAiConnected(connected);
-                }).catch(() => {
-                    setAiConnected(navigator.onLine);
-                });
-            } else {
-                setAiConnected(false);
-            }
-        }, 60000);
-
         // Cleanup
         return () => {
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
-            clearInterval(connectionInterval);
         };
     }, []);
 
@@ -439,15 +425,28 @@ const Dashboard = ({ onLogout, initialQuery }) => {
         } catch (error) {
             console.error('Error al enviar mensaje:', error);
 
+            let errorMessage = `⚠️ **Error de conexión** - No se pudo conectar con el servidor.\n\nPor favor, verifica que el backend esté disponible.`;
+
+            if (error.status === 429) {
+                errorMessage = `⏳ **Límite alcanzado** - Has superado el límite de peticiones permitidas.\n\nPor favor, espera unos instantes antes de volver a intentarlo.`;
+            } else if (error.message && error.message.includes('429')) {
+                errorMessage = `⏳ **Límite alcanzado** - Has superado el límite de peticiones permitidas.\n\nPor favor, espera unos instantes antes de volver a intentarlo.`;
+            }
+
             // Mostrar mensaje de error real - sin datos de demostración
             const aiMsg = {
                 role: 'ai',
-                content: `⚠️ **Error de conexión** - No se pudo conectar con el servidor.\n\nPor favor, verifica que el backend esté disponible.`,
+                content: errorMessage,
                 timestamp: new Date()
             };
 
             setMessages(prev => [...prev, aiMsg]);
-            addToast('Error: No se pudo conectar con el backend', 'error');
+
+            if (error.status === 429 || (error.message && error.message.includes('429'))) {
+                addToast('Error: Límite de peticiones alcanzado', 'error');
+            } else {
+                addToast('Error: No se pudo conectar con el backend', 'error');
+            }
         } finally {
             setIsTyping(false);
         }

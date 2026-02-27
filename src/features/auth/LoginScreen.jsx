@@ -21,7 +21,7 @@ const LoginScreen = ({ onLoginSuccess, onBack, onRegisterClick, initialQuery }) 
         setLoading(true);
         try {
             const response = await login(email, password);
-            
+
             // Guardar token si el backend lo devuelve
             if (response.token) {
                 localStorage.setItem('authToken', response.token);
@@ -29,12 +29,29 @@ const LoginScreen = ({ onLoginSuccess, onBack, onRegisterClick, initialQuery }) 
             if (response.user) {
                 localStorage.setItem('user', JSON.stringify(response.user));
             }
-            
+
             addToast('Sesión iniciada correctamente', 'success');
             onLoginSuccess(initialQuery);
         } catch (error) {
             console.error('Error de login:', error);
-            addToast(error.message || 'Error al iniciar sesión', 'error');
+
+            // Map common error messages to user-friendly Spanish messages
+            let displayMessage = 'Error al iniciar sesión';
+
+            if (error.message) {
+                const errorMsg = error.message.toLowerCase();
+                if (errorMsg.includes('contraseña') || errorMsg.includes('password') || errorMsg.includes('credencial')) {
+                    displayMessage = '💳 Contraseña o correo incorrectos.';
+                } else if (errorMsg.includes('usuario') || errorMsg.includes('user') || errorMsg.includes('no encontrado') || errorMsg.includes('not found')) {
+                    displayMessage = '👤 El usuario no existe. Revisa tu correo.';
+                } else if (errorMsg.includes('network') || errorMsg.includes('conexión') || error.status === 500) {
+                    displayMessage = '🔌 Error de conexión con el servidor. Inténtalo más tarde.';
+                } else {
+                    displayMessage = `❌ ${error.message}`;
+                }
+            }
+
+            addToast(displayMessage, 'error');
         } finally {
             setLoading(false);
         }
@@ -56,18 +73,18 @@ const LoginScreen = ({ onLoginSuccess, onBack, onRegisterClick, initialQuery }) 
                 <div className="space-y-4">
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Email</label>
-                        <Input 
-                            placeholder="usuario@ejemplo.com" 
-                            icon={User} 
+                        <Input
+                            placeholder="usuario@ejemplo.com"
+                            icon={User}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Contraseña</label>
-                        <Input 
-                            placeholder="••••••••" 
-                            type="password" 
+                        <Input
+                            placeholder="••••••••"
+                            type="password"
                             icon={Settings}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}

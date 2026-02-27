@@ -27,7 +27,7 @@ const RegisterScreen = ({ onRegisterSuccess, onBack, onLoginClick }) => {
         setLoading(true);
         try {
             const response = await register({ name, email, password });
-            
+
             // Guardar token si el backend lo devuelve
             if (response.token) {
                 localStorage.setItem('authToken', response.token);
@@ -35,12 +35,31 @@ const RegisterScreen = ({ onRegisterSuccess, onBack, onLoginClick }) => {
             if (response.user) {
                 localStorage.setItem('user', JSON.stringify(response.user));
             }
-            
+
             addToast('Cuenta creada correctamente', 'success');
             onRegisterSuccess();
         } catch (error) {
             console.error('Error de registro:', error);
-            addToast(error.message || 'Error al crear la cuenta', 'error');
+
+            // Map common error messages to user-friendly Spanish messages
+            let displayMessage = 'Error al crear la cuenta';
+
+            if (error.message) {
+                const errorMsg = error.message.toLowerCase();
+                if (errorMsg.includes('correo') || errorMsg.includes('email') || errorMsg.includes('existe') || errorMsg.includes('already exists')) {
+                    displayMessage = '📧 Este correo ya está registrado. Intenta iniciar sesión.';
+                } else if (errorMsg.includes('contraseña') || errorMsg.includes('password') || errorMsg.includes('débil') || errorMsg.includes('weak')) {
+                    displayMessage = '🔒 La contraseña no cumple con los requisitos de seguridad.';
+                } else if (errorMsg.includes('nombre') || errorMsg.includes('name')) {
+                    displayMessage = '👤 El nombre de usuario introducido no es válido.';
+                } else if (errorMsg.includes('network') || errorMsg.includes('conexión') || error.status === 500) {
+                    displayMessage = '🔌 Error de conexión con el servidor. Inténtalo más tarde.';
+                } else {
+                    displayMessage = `❌ ${error.message}`;
+                }
+            }
+
+            addToast(displayMessage, 'error');
         } finally {
             setLoading(false);
         }
@@ -64,8 +83,8 @@ const RegisterScreen = ({ onRegisterSuccess, onBack, onLoginClick }) => {
                 <div className="space-y-4">
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Nombre Completo</label>
-                        <Input 
-                            placeholder="Juan Pérez" 
+                        <Input
+                            placeholder="Juan Pérez"
                             icon={User}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -73,8 +92,8 @@ const RegisterScreen = ({ onRegisterSuccess, onBack, onLoginClick }) => {
                     </div>
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Email</label>
-                        <Input 
-                            placeholder="usuario@ejemplo.com" 
+                        <Input
+                            placeholder="usuario@ejemplo.com"
                             icon={Mail}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -82,9 +101,9 @@ const RegisterScreen = ({ onRegisterSuccess, onBack, onLoginClick }) => {
                     </div>
                     <div>
                         <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Contraseña</label>
-                        <Input 
-                            placeholder="••••••••" 
-                            type="password" 
+                        <Input
+                            placeholder="••••••••"
+                            type="password"
                             icon={Lock}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
