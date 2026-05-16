@@ -7,12 +7,9 @@ import { Star, Car, Calendar, Gauge, Settings, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const AIProductCard = ({ product, index = 0, onSelect }) => {
-    const {
-        'product name': productName,
-        'product description': productDescription,
-        price,
-        rating
-    } = product;
+    const productName = product['product_name'] || product['product name'] || product.name || 'Producto';
+    const productDescription = product['product_description'] || product['product description'] || product.description || '';
+    const { price, rating } = product;
 
     // Determinar el color del badge según el ranking
     const getRankBadge = () => {

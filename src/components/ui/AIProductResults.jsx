@@ -52,9 +52,9 @@ const AIProductResults = ({
             const response = await sendPromptToModel(prompt.trim(), selectedModel);
             
             // El backend devuelve un array de productos
-            if (Array.isArray(response)) {
+            if (Array.isArray(response) && response.length > 0) {
                 setProducts(response);
-            } else if (response.products && Array.isArray(response.products)) {
+            } else if (response && response.products && Array.isArray(response.products)) {
                 setProducts(response.products);
             } else {
                 setProducts([]);
@@ -297,7 +297,7 @@ const AIProductResults = ({
                         <div className="grid grid-cols-1 gap-4">
                             {products.map((product, index) => (
                                 <AIProductCard
-                                    key={`${product['product name']}-${index}`}
+                                    key={`${product['product_name'] || product['product name'] || index}-${index}`}
                                     product={product}
                                     index={index}
                                     onSelect={onProductSelect}

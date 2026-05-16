@@ -394,15 +394,19 @@ const Dashboard = ({ onLogout, initialQuery }) => {
             const backendProducts = await sendPromptToModel(contextMessage, selectedModel);
 
             // Verificar si recibimos productos del backend
-            if (backendProducts && Array.isArray(backendProducts) && backendProducts.length > 0) {
-                console.log(`📦 Recibidos ${backendProducts.length} productos del backend`);
+            const productsArray = Array.isArray(backendProducts) ? backendProducts
+                : (backendProducts?.products && Array.isArray(backendProducts.products)) ? backendProducts.products
+                : null;
+
+            if (productsArray && productsArray.length > 0) {
+                console.log(`📦 Recibidos ${productsArray.length} productos del backend`);
 
                 // Crear mensaje de IA con las tarjetas de productos del backend
                 const aiMsg = {
                     role: 'ai',
-                    content: `He encontrado **${backendProducts.length} productos** que coinciden con tu búsqueda "${text}":\n\n*Modelo utilizado: ${currentModel.name}*`,
+                    content: `He encontrado **${productsArray.length} productos** que coinciden con tu búsqueda "${text}":\n\n*Modelo utilizado: ${currentModel.name}*`,
                     timestamp: new Date(),
-                    backendProducts: backendProducts
+                    backendProducts: productsArray
                 };
 
                 setMessages(prev => [...prev, aiMsg]);

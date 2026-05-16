@@ -83,10 +83,24 @@ export async function logout() {
  * @returns {Promise<Object>} - Respuesta del backend con productos recomendados
  */
 export async function sendPromptToModel(prompt, model = 'openai/gpt-oss-120b') {
-    return fetchAPI('/search', {
+    const data = await fetchAPI('/search', {
         method: 'POST',
         body: JSON.stringify({ prompt, model }),
     });
+
+    // El backend devuelve { success: true, data: [...] }
+    // Normalizar para devolver siempre el array de productos
+    if (data && data.success && data.data !== undefined) {
+        if (Array.isArray(data.data)) return data.data;
+        // Puede venir como objeto con clave "products" u otro array anidado
+        if (data.data && typeof data.data === 'object') {
+            const nested = Object.values(data.data).find(v => Array.isArray(v));
+            if (nested) return nested;
+        }
+        return data.data;
+    }
+
+    return data;
 }
 
 // ============================================

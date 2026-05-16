@@ -225,16 +225,39 @@ const InteractiveChat = ({
         try {
             const data = await sendPromptToModel(contextMessage);
 
+            // Si el backend devuelve un array de productos, construir mensaje de recomendación
+            let messageContent;
+            if (Array.isArray(data) && data.length > 0) {
+                const formatPrice = (p) => new Intl.NumberFormat('es-ES', {
+                    style: 'currency', currency: 'EUR',
+                    minimumFractionDigits: 0, maximumFractionDigits: 0
+                }).format(p || 0);
+
+                messageContent = {
+                    type: 'recommendation',
+                    status: 'complete',
+                    summary: `He encontrado ${data.length} producto${data.length === 1 ? '' : 's'} para ti.`,
+                    products: data.map(p => ({
+                        name: p['product_name'] || p['product name'] || p.name || 'Producto',
+                        price: formatPrice(p.price),
+                        reason: p['product_description'] || p['product description'] || p.description || '',
+                        matchScore: p.rating ? Math.round(p.rating * 20) : null,
+                    })),
+                };
+            } else {
+                messageContent = data;
+            }
+
             // Añadir mensaje de la IA
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: data,
+                content: messageContent,
                 timestamp: new Date()
             }]);
 
             // Si hay pregunta, mostrar opciones
-            if (data.type === 'question') {
-                setCurrentQuestion(data);
+            if (messageContent && messageContent.type === 'question') {
+                setCurrentQuestion(messageContent);
             }
 
             // Guardar contexto de respuestas

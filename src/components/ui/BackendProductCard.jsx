@@ -18,8 +18,8 @@ const BackendProductCard = ({ product, index = 0, onSelect }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     // Normalizar nombres de campos (el backend puede enviar "product name" o "productName")
-    const productName = product['product name'] || product.productName || product.name || 'Producto';
-    const productDescription = product['product description'] || product.productDescription || product.description || '';
+    const productName = product['product_name'] || product['product name'] || product.productName || product.name || 'Producto';
+    const productDescription = product['product_description'] || product['product description'] || product.productDescription || product.description || '';
     const price = product.price || 0;
     const rating = product.rating || 0;
 
